@@ -5,6 +5,7 @@ import { useState } from 'react'
 import LogSession from './components/LogSession'
 import SessionHistory from './components/SessionHistory'
 import RouteLogger from './components/RouteLogger'
+import Stats from './components/Stats'
 
 function App() {
   const [screen, setScreen] = useState('history')
@@ -23,27 +24,20 @@ function App() {
     <div style={{ maxWidth: '480px', margin: '0 auto', padding: '1rem', fontFamily: 'sans-serif' }}>
 
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-  <h1 style={{ fontSize: '1.2rem', fontWeight: '600', margin: 0, width: '120px', flexShrink: 0 }}>
-    Sendr
-  </h1>
-  <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
-          <button
-            onClick={() => setScreen('log')}
-            style={screen === 'log' ? activeTabStyle : tabStyle}
-          >
-            Log
-          </button>
-          <button
-            onClick={() => setScreen('history')}
-            style={screen === 'history' ? activeTabStyle : tabStyle}
-          >
-            History
-          </button>
-        </div>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', alignItems: 'center', marginBottom: '1.5rem' }}>
+  <h1 style={{ fontSize: '1.2rem', fontWeight: '600', margin: 0 }}>Sendr</h1>
+  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+    <button onClick={() => setScreen('log')} style={screen === 'log' ? activeTabStyle : tabStyle}>Log</button>
+    <button onClick={() => setScreen('history')} style={screen === 'history' ? activeTabStyle : tabStyle}>History</button>
+      <button onClick={() => setScreen('stats')} style={screen === 'stats' ? activeTabStyle : tabStyle}>Stats</button>
+  </div>
+  <div />
+</div>
       </div>
 
       {screen === 'log' && <LogSession onSessionLogged={handleSessionLogged} />}
       {screen === 'history' && <SessionHistory onSelectSession={handleSelectSession} />}
+      {screen === 'stats' && <Stats />}
       {screen === 'routes' && selectedSession && (
         <>
           <button onClick={() => setScreen('history')} style={backButtonStyle}>

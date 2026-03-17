@@ -1,15 +1,20 @@
 // This component allows users to log climbing routes for a specific session. It fetches the routes associated with the given session from the Supabase database and displays them in a list. Users can add new routes by entering the grade, style, result, attempts, and notes, which are then saved to the database and displayed in the list of routes for that session.
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
+import MediaUploader from './MediaUploader'
+import RouteDetail from './RouteDetail'
+
 
 function RouteLogger({ session }) {
   const [routes, setRoutes] = useState([])
+  const [name, setName] = useState('')
   const [grade, setGrade] = useState('')
-  const [style, setStyle] = useState('boulder')
-  const [result, setResult] = useState('sent')
+  const [style, setStyle] = useState('Boulder')
+  const [result, setResult] = useState('Sent')
   const [notes, setNotes] = useState('')
   const [attempts, setAttempts] = useState (1)
   const [status, setStatus] = useState(null)
+  const [selectedRoute, setSelectedRoute] = useState(null)
 
   useEffect(() => {
     fetchRoutes()
@@ -32,6 +37,7 @@ function RouteLogger({ session }) {
 
     const { error } = await supabase.from('routes').insert({
       session_id: session.id,
+      name,
       grade,
       style,
       result,
@@ -43,13 +49,21 @@ function RouteLogger({ session }) {
       setStatus('Error: ' + error.message)
     } else {
       setStatus(null)
+      setName('')
       setGrade('')
       setNotes('')
       setAttempts(1)
       fetchRoutes()
     }
   }
-
+  if (selectedRoute) {
+      return (
+        <RouteDetail
+          route={selectedRoute}
+          onBack={() => setSelectedRoute(null)}
+        />
+      )
+    }
   return (
     <div>
       <div style={{ marginBottom: '1.5rem' }}>
@@ -73,6 +87,15 @@ function RouteLogger({ session }) {
         Log a route
       </h3>
 
+      <label style={labelStyle}>Name</label>
+      <input
+        type="text"
+        placeholder="Route name or description"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        style={inputStyle}
+      />
+
       <label style={labelStyle}>Grade</label>
       <input
         type="text"
@@ -84,19 +107,19 @@ function RouteLogger({ session }) {
 
       <label style={labelStyle}>Style</label>
       <select value={style} onChange={e => setStyle(e.target.value)} style={inputStyle}>
-        <option value="boulder">Boulder</option>
-        <option value="top_rope">Top rope</option>
-        <option value="lead">Lead</option>
+        <option value="Boulder">Boulder</option>
+        <option value="Top Rope">Top rope</option>
+        <option value="Lead">Lead</option>
       </select>
 
       <label style={labelStyle}>Result</label>
       <select value={result} onChange={e => setResult(e.target.value)} style={inputStyle}>
-        <option value="sent">Sent</option>
-        <option value="fell">Fell</option>
-        <option value="project">Project</option>
+        <option value="Sent">Sent</option>
+        <option value="Fell">Fell</option>
+        <option value="Project">Project</option>
       </select>
 
-  <label style={labelStyle}>Attempts (minutes)</label>
+  <label style={labelStyle}>Attempts</label>
       <input
         type="number"
         placeholder="1"
@@ -127,10 +150,11 @@ function RouteLogger({ session }) {
             Routes this session ({routes.length})
           </h3>
           {routes.map(route => (
-            <div key={route.id} style={routeRowStyle}>
-              <span style={{ fontWeight: '600' }}>{route.grade}</span>
+            
+            <div key={route.id} onClick={() => setSelectedRoute(route)} style={routeRowStyle}>
+              <span style={{ fontWeight: '600' }}>{route.name}</span>
               <span style={{ fontSize: '0.85rem', color: '#666', marginLeft: '8px' }}>
-                {route.style.replace('_', ' ')} · {route.result}
+               {route.grade} · {route.style.replace('_', ' ')} · {route.result}
               </span>
               {route.notes && (
                 <span style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '8px' }}>
@@ -182,6 +206,8 @@ const routeRowStyle = {
   background: '#f5f5f5',
   borderRadius: '8px',
   marginBottom: '6px',
+  cursor: 'pointer',
 }
+
 
 export default RouteLogger
