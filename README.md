@@ -17,7 +17,7 @@ A mobile-friendly climbing session tracker built with React and Supabase.
 
 ## Live demo
 
-https://sendr-nine.vercel.app/
+*link to come*
 
 ## Screenshots
 
