@@ -21,6 +21,9 @@ https://sendr-nine.vercel.app/
 
 ## Screenshots
 
+<img width="613" height="620" alt="image" src="https://github.com/user-attachments/assets/86ea60a0-4f52-492b-a4b4-7b38293b8bff" />
+<img width="577" height="970" alt="image" src="https://github.com/user-attachments/assets/e784bd27-a1e8-4316-9943-a8beeeb84fad" />
+<img width="564" height="711" alt="image" src="https://github.com/user-attachments/assets/2fd71ca1-902e-444f-8c44-4bc0fc813300" />
 
 
 ## Running locally
