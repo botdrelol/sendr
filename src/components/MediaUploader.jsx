@@ -1,3 +1,5 @@
+// This component allows users to upload photos and videos for a specific climbing route. 
+// It fetches existing media items for the route from the Supabase database and displays them in a grid. Users can click the upload button to select a file, which is then uploaded to Supabase Storage and its URL saved in the database. The component also handles file size validation and displays status messages for upload success or errors.
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 

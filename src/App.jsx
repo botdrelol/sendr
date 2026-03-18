@@ -40,9 +40,6 @@ function App() {
       {screen === 'stats' && <Stats />}
       {screen === 'routes' && selectedSession && (
         <>
-          <button onClick={() => setScreen('history')} style={backButtonStyle}>
-            ← Back
-          </button>
           <RouteLogger session={selectedSession} />
         </>
       )}

@@ -35,6 +35,9 @@ function RouteLogger({ session }) {
       return
     }
 
+ 
+
+
     const { error } = await supabase.from('routes').insert({
       session_id: session.id,
       name,
@@ -57,13 +60,35 @@ function RouteLogger({ session }) {
     }
   }
   if (selectedRoute) {
-      return (
-        <RouteDetail
-          route={selectedRoute}
-          onBack={() => setSelectedRoute(null)}
-        />
-      )
-    }
+  return (
+    <RouteDetail
+      route={selectedRoute}
+      onBack={() => setSelectedRoute(null)}
+      onDelete={(id) => {
+        setRoutes(routes.filter(r => r.id !== id))
+        setSelectedRoute(null)
+      }}
+      onEdit={(updatedRoute) => {
+        setRoutes(routes.map(r => r.id === updatedRoute.id ? updatedRoute : r))
+        setSelectedRoute(updatedRoute)
+      }}
+    />
+  )
+}
+
+   async function handleDeleteRoute(id) {
+  const confirmed = window.confirm('Delete this route?')
+  if (!confirmed) return
+
+  const { error } = await supabase
+    .from('routes')
+    .delete()
+    .eq('id', id)
+
+  if (!error) {
+    setRoutes(routes.filter(r => r.id !== id))
+  }
+}
   return (
     <div>
       <div style={{ marginBottom: '1.5rem' }}>
@@ -150,19 +175,32 @@ function RouteLogger({ session }) {
             Routes this session ({routes.length})
           </h3>
           {routes.map(route => (
-            
-            <div key={route.id} onClick={() => setSelectedRoute(route)} style={routeRowStyle}>
-              <span style={{ fontWeight: '600' }}>{route.name}</span>
-              <span style={{ fontSize: '0.85rem', color: '#666', marginLeft: '8px' }}>
-               {route.grade} · {route.style.replace('_', ' ')} · {route.result}
-              </span>
-              {route.notes && (
-                <span style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '8px' }}>
-                  {route.notes}
-                </span>
-              )}
-            </div>
-          ))}
+  <div key={route.id} style={{ position: 'relative' }}>
+    <div
+      onClick={() => setSelectedRoute(route)}
+      style={routeRowStyle}
+    >
+      <span style={{ fontWeight: '600' }}>{route.grade}</span>
+      <span style={{ fontSize: '0.85rem', color: '#666', marginLeft: '8px' }}>
+        {route.name} · {route.style.replace('_', ' ')} · {route.result} · {route.attempts} Attempts
+      </span>
+      {route.notes && (
+        <span style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '8px' }}>
+          {route.notes}
+        </span>
+      )}
+    </div>
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        handleDeleteRoute(route.id)
+      }}
+      style={deleteButtonStyle}
+    >
+      ✕
+    </button>
+  </div>
+))}
         </div>
       )}
     </div>
@@ -207,6 +245,18 @@ const routeRowStyle = {
   borderRadius: '8px',
   marginBottom: '6px',
   cursor: 'pointer',
+}
+
+const deleteButtonStyle = {
+  position: 'absolute',
+  top: '8px',
+  right: '8px',
+  background: 'none',
+  border: 'none',
+  color: '#f80000',
+  fontSize: '1rem',
+  cursor: 'pointer',
+  padding: '4px 8px',
 }
 
 
